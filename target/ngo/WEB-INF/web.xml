@@ -4,4 +4,15 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>NgoMainController</servlet-name>
+  	<display-name>NgoMainController</display-name>
+  	<description></description>
+  	<servlet-class>com.ngo.server.main.NgoMainController</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>NgoMainController</servlet-name>
+  	<url-pattern>/NgoMainController</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -2,6 +2,7 @@ package com.ngo.server.main;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.ngo.server.connection.ConnectionPool;
 import com.ngo.server.pojos.Emp;
+import com.ngo.server.utilities.NgoProperty;
 
 /**
  * Servlet implementation class NgoMainController
@@ -38,6 +41,7 @@ public class NgoMainController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		NgoProperty.loadNgoProperties();
 		String json = request.getParameter("OBJ");
 		Gson gson = new Gson();
 		Emp names = gson.fromJson(json,Emp.class);

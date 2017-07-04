@@ -5,17 +5,25 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.ngo.server.utilities.NgoProperty;
 import com.ngo.server.utilities.ServerConstant;
 
+/**
+ * 
+ * @author VISHWAS SINGH
+ *
+ */
 public class ConnectionPool {
 
-	private BlockingQueue<Connection> queueConnection = new LinkedBlockingQueue<Connection>();
+	private BlockingQueue<Connection> queueConnection;
 	private static ConnectionPool connectionPool;
 	private final int INITIAL_CAPACITY = 20;
 
 	private ConnectionPool() {
+		queueConnection = new LinkedBlockingQueue<Connection>(INITIAL_CAPACITY);
 		initConnectionPool();
 	}
 
@@ -29,7 +37,6 @@ public class ConnectionPool {
 						NgoProperty.getProperty(ServerConstant.MY_SQL_PWD).toString());
 				queueConnection.add(connection);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -37,6 +44,21 @@ public class ConnectionPool {
 			}
 		}
 
+	}
+	
+	public Connection getCononnection(){
+		Connection con = null;
+		try {
+			con = queueConnection.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return con;
+	}
+	
+	public void releaseConnection(Connection connection){
+		queueConnection.offer(connection);
 	}
 
 	public static ConnectionPool getInstance() {
