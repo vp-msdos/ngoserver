@@ -38,7 +38,7 @@ public class NgoMainController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String json = request.getParameter("Obj");
+		String json = request.getParameter("OBJ");
 		Gson gson = new Gson();
 		Emp names = gson.fromJson(json,Emp.class);
 		response.setContentType("text/text");
