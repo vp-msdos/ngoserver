@@ -15,6 +15,7 @@ public class ServerConstant {
 	public final static String INSERT = "INSERT";
 	public final static String SELECT = "SELECT";
 	public final static String UPDATE = "UPDATE";
+	public final static String SESSION = "SESSION";
 	
 
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.gson.Gson;
 import com.ngo.server.persistance.vo.MemberVO;
 import com.ngo.server.pojos.Member;
+import com.ngo.server.session.Session;
 
 /**
  * 
@@ -50,6 +51,13 @@ public class NgoServerHelper {
 		}
 		Object serilizedObject = gson.fromJson(json,loadedPojo);
 		return serilizedObject;
+	}
+	
+	public static Session getSessionObjectFromRequest(HttpServletRequest request){
+		Gson gson = new Gson();
+		String json = request.getParameter(ServerConstant.SESSION);
+		Session session = gson.fromJson(json, Session.class);
+		return session;
 	}
 
 }
