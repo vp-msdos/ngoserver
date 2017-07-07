@@ -2,8 +2,6 @@ package com.ngo.server.main;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,22 +9,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
-import com.ngo.server.connection.ConnectionPool;
-import com.ngo.server.pojos.Emp;
+import org.apache.log4j.Logger;
+
+import com.ngo.server.commandhandlers.CommandHandler;
+import com.ngo.server.persistance.dao.NgoFactory;
+import com.ngo.server.utilities.FactoryProducer;
 import com.ngo.server.utilities.NgoProperty;
+import com.ngo.server.utilities.NgoServerHelper;
+import com.ngo.server.utilities.ServerConstant;
 
 /**
  * Servlet implementation class NgoMainController
  */
 public class NgoMainController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private NgoFactory ngoFactory = null;
+	final static Logger logger = Logger.getLogger(NgoMainController.class);
     /**
      * Default constructor. 
      */
     public NgoMainController() {
-        // TODO Auto-generated constructor stub
+    	NgoProperty.loadNgoProperties();
+    	ngoFactory = FactoryProducer.getFactory(ServerConstant.COMMAND_HANDLER_FACTORY);
     }
 
 	/**
@@ -41,14 +45,18 @@ public class NgoMainController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		NgoProperty.loadNgoProperties();
-		String json = request.getParameter("OBJ");
-		Gson gson = new Gson();
-		Emp names = gson.fromJson(json,Emp.class);
+		logger.info("Received post request");
 		response.setContentType("text/text");
         response.setCharacterEncoding( "UTF-8" );
         PrintWriter out = response.getWriter();
-        out.append(names.getId()+" "+names.getEmpName());
+        List<CommandHandler> commandHandlerList = ngoFactory.getAllCommandHandlers();
+        logger.info("All commandHandler loaded.");
+        Object resultFromCommandHandler = null;
+        for(CommandHandler commandHandler : commandHandlerList){
+        	resultFromCommandHandler = commandHandler.executeRequest(request, NgoServerHelper.getSerilizedObjectFromRequest(request));
+        }
+        logger.info("Request executed sending response");
+        out.append(resultFromCommandHandler.toString());
         out.close();
 		//doGet(request, response);
 	}
